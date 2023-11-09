@@ -1,0 +1,10 @@
+apiVersion: sbp.vmware.jp/v1alpha1
+kind: Spreadsheet
+metadata:
+  name: spreadsheet-sample
+spec:
+  kubeAggregatorURL: http://aggregator:8080
+  kubeFormatterURL: http://formatter:8080
+  scrapeResource: Pod
+  targetNamespace: default
+  pollingTime: 2m

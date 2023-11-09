@@ -1,0 +1,33 @@
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  creationTimestamp: null
+  name: kubereport-controller-role
+rules:
+  - apiGroups:
+      - sbp.vmware.jp
+    resources:
+      - spreadsheet
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch
+  - apiGroups:
+      - sbp.vmware.jp
+    resources:
+      - spreadsheet/finalizers
+    verbs:
+      - update
+  - apiGroups:
+      - sbp.vmware.jp
+    resources:
+      - spreadsheet/status
+    verbs:
+      - get
+      - patch
+      - update

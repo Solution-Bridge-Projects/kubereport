@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: formatter
+  name: formatter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: formatter
+  template:
+    metadata:
+      labels:
+        run: formatter
+    spec:
+      containers:
+      - image: sbpimage/kubereport-formatter:latest
+        name: formatter
+        env: 
+        - name: MINIO_BACKET
+          value: xlsx-upload-test
+        - name: MINIO_ENDPOINT_URL
+          value: http://minio:9000
+        - name: MINIO_ACCESS_KEY_ID
+          value: minioadmin
+        - name: MINIO_SECRET_ACCESS_KEY
+          value: VMware1!

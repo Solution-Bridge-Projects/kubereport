@@ -1,0 +1,45 @@
+#@ load("@ytt:data", "data")
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    run: aggregator
+  name: aggregator
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: aggregator
+  template:
+    metadata:
+      labels:
+        run: aggregator
+    spec:
+      containers:
+      - image: sbpimage/kubereport-aggregator:latest 
+        name: aggregator
+        volumeMounts:
+        - name: ip
+          mountPath: "/tmp/k8sClusterIPaddress"
+          readOnly: false
+          subPath: k8sClusterIPaddress
+        - name: token
+          mountPath: "/tmp/k8sClusterToken"
+          readOnly: false
+          subPath: k8sClusterToken
+      volumes:
+      - name: ip
+        configMap:
+          name: aggregator-config
+          items:
+          - key: ip
+            path: k8sClusterIPaddress
+
+      - name: token
+        configMap:
+          name: aggregator-config
+          items:
+          - key: token
+            path: k8sClusterToken
+

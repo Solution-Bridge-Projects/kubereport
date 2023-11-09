@@ -1,0 +1,4 @@
+spreadsheet.yaml
+aggregator_configmap.yaml
+kpack-components.yaml
+release-*.yaml

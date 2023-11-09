@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: kubereport-controller
+  name: kubereport-controller
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kubereport-controller
+  template:
+    metadata:
+      labels:
+        app: kubereport-controller
+    spec:
+      containers:
+      - image: sbpimage/kubereport-controller:latest
+        name: kubereport-controller
+      serviceAccountName: kubereport-controller

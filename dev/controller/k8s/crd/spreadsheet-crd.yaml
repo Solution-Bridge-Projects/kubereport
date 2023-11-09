@@ -1,0 +1,125 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.7.0
+  creationTimestamp: null
+  name: spreadsheet.sbp.vmware.jp
+spec:
+  group: sbp.vmware.jp
+  names:
+    kind: Spreadsheet
+    listKind: SpreadsheetList
+    plural: spreadsheet
+    shortNames:
+    - xls
+    singular: spreadsheet
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .metadata.namespace
+      name: NAMESPACE
+      type: string
+    - jsonPath: .status.friendlyDescription
+      name: DESCRIPTION
+      type: string
+    name: v1alpha1
+    schema:
+      openAPIV3Schema:
+        description: Spreadsheet is the Schema for the spreadsheet API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+            of an object. Servers should convert recognized schemas to the latest
+            internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+            object represents. Servers may infer this from the endpoint the client
+            submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: SpreadsheetSpec defines the desired state of Spreadsheet
+            properties:
+              kubeAggregatorURL:
+                default: http://aggregator:8080
+                description: KubeAggregatorURL is a string to specify the aggregator
+                  URL.
+                type: string
+              kubeFormatterURL:
+                default: http://formatter:8080
+                description: KubeFormatterURL is a string to specify the formatter
+                  URL.
+                type: string
+              scrapeResource:
+                default: Pod
+                description: ScrapeResources is an list of resources to scrape of
+                  Spreadsheet.
+                type: string
+              summary:
+                description: Summary is a boolean to add whether or not summary page
+                  in Spreadsheet.
+                type: boolean
+              targetNamespace:
+                default: all
+                description: TargetNamespaces is an list of namespaces to scrape of
+                  Spreadsheet.
+                type: string
+              vsphere:
+                description: VSphere is a boolean to add whether or not vsphere page
+                  in Spreadsheet.
+                type: boolean
+              pollingTime:
+                default: 24h
+                description: The pollingTime is a string that sets the interval
+                  between outputting excel in h (hour) and m (min).
+                  Example 1h30m
+                type: string
+            type: object
+          status:
+            description: SpreadsheetStatus defines the observed state of Spreadsheet
+            properties:
+              aggregated:
+                description: Aggregated is a boolean to tell the status of aggregator
+                properties:
+                  error:
+                    type: string
+                  startedAt:
+                    type: string
+                  success:
+                    type: string
+                  updateAt:
+                    type: string
+                type: object
+              formatted:
+                description: Formatted is a boolean to tell the status of formatter
+                properties:
+                  error:
+                    type: string
+                  startedAt:
+                    type: string
+                  success:
+                    type: string
+                  updateAt:
+                    type: string
+                type: object
+              friendlyDescription:
+                description: FriendlyDescription is a string indicating the status
+                type: string
+            required:
+            - friendlyDescription
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+status:
+  acceptedNames:
+    kind: ""
+    plural: ""
+  conditions: []
+  storedVersions: []
