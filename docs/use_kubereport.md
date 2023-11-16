@@ -2,9 +2,9 @@
 ## Kubernetes のリソース情報を minio 上の Excel に定期出力する
 1. spreadsheet-sample.yamlを元にspreadsheet.yamlを作成し、取得したいリソースの種類やnamespace、取得間隔を指定する
     ```
-    $ cd dev/
-    $ cp ./spreadsheet-sample.yaml ./spreadsheet.yaml
-    $ vim spreadsheet.yaml
+    cd dev/
+    cp ./spreadsheet-sample.yaml ./spreadsheet.yaml
+    vim spreadsheet.yaml
     ```
 
 1. spreadsheetの各keyの説明:  
@@ -32,13 +32,13 @@
 
 1. spreadsheet.yamlの適用
     ```
-    $ kubectl apply -f spreadsheet.yaml
+    kubectl apply -f spreadsheet.yaml
     ```
 
 ## minio 上の エクセルを回収する
 1. 以下のコマンドで minio の Service を表示
     ```
-    $ kubectl get svc
+    kubectl get svc
     ```
 1. 1.のEXTERNAL-IPに表示されたIPアドレスへブラウザアクセスし、以下のログイン情報を使用  
     ID: minioadmin  
