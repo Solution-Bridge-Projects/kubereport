@@ -1,5 +1,6 @@
 # 必要なライブラリとモジュールをインポート
-from fastapi import FastAPI, Request
+from loguru import logger
+from fastapi import FastAPI, Request, status, HTTPException
 from fastapi.responses import JSONResponse
 import pandas
 import os
@@ -53,21 +54,21 @@ class Thread(threading.Thread):
         スレッドが実行するメソッド。Excel出力処理を実施
         """
         # スレッドが開始したことを表示
-        print(f"Thread ID: {self.id} has started.")
+        logger.info(f"Thread ID: {self.id} has started.")
 
         # 処理開始時間を取得・表示
         now = datetime.datetime.now()
-        print("output_to_excel START! " + now.strftime('%Y年%m月%d日%H:%M:%S'))
+        logger.info("output_to_excel START! " + now.strftime('%Y年%m月%d日%H:%M:%S'))
 
         # Excel出力関数を呼び出し
         output_to_excel(self.input, self.output)
 
         # 処理終了時間を取得・表示
         now = datetime.datetime.now()
-        print("output_to_excel DONE!  " + now.strftime('%Y年%m月%d日%H:%M:%S'))
+        logger.info("output_to_excel DONE!  " + now.strftime('%Y年%m月%d日%H:%M:%S'))
 
         # スレッドが終了したことを表示
-        print(f"Thread ID: {self.id} has finished. ")
+        logger.info(f"Thread ID: {self.id} has finished. ")
 
 
 def output_to_excel(input: str, output: str):
@@ -118,18 +119,18 @@ def output_to_excel(input: str, output: str):
 
         # Excelへの書き込み開始時刻をprint
         now = datetime.datetime.now()
-        print("df.to_excel START! " + now.strftime('%Y年%m月%d日%H:%M:%S'))
+        logger.info("df.to_excel START! " + now.strftime('%Y年%m月%d日%H:%M:%S'))
 
         df.to_excel(output)
 
         # Excelへの書き込み終了時刻をprint
         now = datetime.datetime.now()
-        print("df.to_excel STOP! " + now.strftime('%Y年%m月%d日%H:%M:%S'))
+        logger.info("df.to_excel STOP! " + now.strftime('%Y年%m月%d日%H:%M:%S'))
 
         # ファイルのパーミッションを設定
         os.chmod(output, 0o644)
     else:
-        print("出力先にファイルが存在します。")
+        logger.warning("出力先にファイルが存在します。")
 
     # ファイルをMinioにアップロード
     minio_upload(output)
@@ -357,7 +358,8 @@ def analyze_nested_list(
                                    1] = k + "(" + str(duplication_num) + ")"
             num += 1
     else:
-        print("例外です。タイプは" + type(v_dict))
+        logger.error("例外です。タイプは" + type(v_dict))
+        HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="")
 
     return df, key_num, current_row_num
 
@@ -494,15 +496,15 @@ async def process_resource(request: Request):
     # ヘッダがjsonでない場合
     content_type = request.headers.get("content-type")
     if content_type != 'application/json':
-        print('content type is not application/json {}'.format(content_type))
+        logger.warning('content type is not application/json {}'.format(content_type))
         return " ", 404
 
     # 受け取ったjsonをinputデータとして変数に格納
     try:
         input = await request.json()
     except json.JSONDecodeError as e:
-        print(sys.exc_info())
-        print(e)
+        logger.error(sys.exc_info())
+        logger.error(e)
         return " ", 406
 
     # スレッドを動的に作成

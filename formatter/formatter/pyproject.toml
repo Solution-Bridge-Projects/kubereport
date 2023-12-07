@@ -13,6 +13,7 @@ Jinja2 = "^3.1.2"
 fastapi = "^0.95.0"
 uvicorn = "^0.21.1"
 boto3 = "^1.26.113"
+loguru = "^0.7.2"
 
 [tool.poetry.dev-dependencies]
 pytest = "^6.2.5"
