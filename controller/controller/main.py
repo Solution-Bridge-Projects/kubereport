@@ -1,4 +1,5 @@
 from kubernetes import client, config, watch
+from loguru import logger
 import os
 import sys
 import threading
@@ -127,7 +128,7 @@ class StoppableThread(threading.Thread):
         この関数内でCRDに対する各種操作を実施
         """
         # スレッドの開始を報告
-        print(f"Thread ID: {self.id} has started.")
+        logger.info(f"Thread ID: {self.id} has started.")
         # スプレッドシートオブジェクトの初期化
         obj = self.obj
         obj = self.init_spreadsheet(obj)
@@ -138,7 +139,7 @@ class StoppableThread(threading.Thread):
         # スレッド停止イベントがセットされるまでループ
         while not self.stopped():
             # スレッド動作中の報告
-            print(f"Thread ID: {self.id} is running.")
+            logger.info(f"Thread ID: {self.id} is running.")
             # タイムアウトフラグ
             timeout_flag = False
 
@@ -166,7 +167,7 @@ class StoppableThread(threading.Thread):
             try:
                 res = requests.get(url=url, verify=False, timeout=3.0)
             except Timeout:
-                print(f"Thread ID: {self.id} aggregator request timed out.")
+                logger.error(f"Thread ID: {self.id} aggregator request timed out.")
                 timeout_flag = True
                 pass
 
@@ -289,11 +290,11 @@ class StoppableThread(threading.Thread):
                 self.api)
 
             # スレッドを一定時間停止（ポーリング間隔に基づく）
-            print(f"Thread ID: {self.id} is sleeping for {self.minutes}m.")
+            logger.info(f"Thread ID: {self.id} is sleeping for {self.minutes}m.")
             time.sleep(self.minutes * 60)  # CRD の pollingTime 分待つ
 
         # スレッドの終了を報告
-        print(f"Thread ID: {self.id} has finished. ")
+        logger.info(f"Thread ID: {self.id} has finished. ")
 
 
 def read_crd():
@@ -391,7 +392,7 @@ def change_status(group, namespace, version, plural, name, obj, api):
             break
         except client.exceptions.ApiException as e:
             if e.status == 409:  # 競合発生
-                print("Conflict occurred when updating status, retrying...")
+                logger.error("Conflict occurred when updating status, retrying...")
                 # 競合解消のため、最新のオブジェクトを取得
                 obj = api.get_namespaced_custom_object(
                     group=group,
