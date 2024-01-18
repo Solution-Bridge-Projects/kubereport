@@ -1,3 +1,4 @@
+from loguru import logger
 from fastapi import FastAPI, HTTPException
 from fastapi.responses import JSONResponse
 import uvicorn
@@ -64,7 +65,7 @@ def get_kubernetes_resource(ns: str = None, kind: str = None):
     """
     # aggregatorの処理開始時刻をログに記録
     now = datetime.datetime.now()
-    print("get_kubernetes_resource START! " +
+    logger.info("get_kubernetes_resource START! " +
           now.strftime('%Y年%m月%d日%H:%M:%S'))
 
     # configmapから生成されたファイルより、k8sクラスタのトークンを取得
@@ -84,7 +85,7 @@ def get_kubernetes_resource(ns: str = None, kind: str = None):
     try:
         api_version, resource_type = get_api_version_and_resource_type(kind)
     except ValueError as e:
-        print(e)
+        logger.error(e)
         raise HTTPException(status_code=500, detail="internal error")
 
     # namespaceの指定がない場合、すべてのnsを対象とする
@@ -107,7 +108,7 @@ def get_kubernetes_resource(ns: str = None, kind: str = None):
 
     # aggregatorの処理終了時刻をログに記録
     now = datetime.datetime.now()
-    print("get_kubernetes_resource DONE! " + now.strftime('%Y年%m月%d日%H:%M:%S'))
+    logger.info("get_kubernetes_resource DONE! " + now.strftime('%Y年%m月%d日%H:%M:%S'))
 
     # リソースのjson情報をreturn
     return res_body
